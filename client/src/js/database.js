@@ -19,14 +19,14 @@ const jateStore = async (permission = "readonly") => {
   return store;
 };
 
-// TODO: Add logic to a method that accepts some content and adds it to the database
+// Add logic to a method that accepts some content and adds it to the database
 export const putDb = async (content) => {
   const store = await jateStore("readwrite");
   const res = await store.put({ id: 1, value: content });
   return res;
 };
 
-// TODO: Add logic for a method that gets all the content from the database
+// Add logic for a method that gets all the content from the database
 export const getDb = async () => {
   const store = await jateStore("readonly");
   const res = await store.get(1);
