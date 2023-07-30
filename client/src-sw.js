@@ -19,6 +19,15 @@ const pageCache = new CacheFirst({
   ],
 });
 
+const assetCache = new CacheFirst({
+  cacheName: "asset-cache",
+  plugins: [
+    new CacheableResponsePlugin({
+      statuses: [0, 200],
+    }),
+  ],
+});
+
 warmStrategyCache({
   urls: ["/index.html", "/"],
   strategy: pageCache,
@@ -26,5 +35,7 @@ warmStrategyCache({
 
 registerRoute(({ request }) => request.mode === "navigate", pageCache);
 
-// TODO: Implement asset caching
-registerRoute(/\.(?:css|js|png|gif|jpg|jpeg|webp|svg)$/, pageCache);
+registerRoute(
+  ({ request }) => ["style", "script", "worker"].includes(request.destination),
+  assetCache
+);

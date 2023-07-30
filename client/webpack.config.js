@@ -1,7 +1,7 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const WebpackPwaManifest = require("webpack-pwa-manifest");
-const { GenerateSW } = require("workbox-webpack-plugin");
+const { InjectManifest } = require("workbox-webpack-plugin");
 
 // TODO: Add and configure workbox plugins for a service worker and manifest file.
 // TODO: Add CSS loaders and babel to webpack.
@@ -17,34 +17,40 @@ module.exports = () => {
       filename: "[name].bundle.js",
       path: path.resolve(__dirname, "dist"),
     },
-    devServer: {
-      hot: "only",
-    },
     plugins: [
-      new HtmlWebpackPlugin(),
+      new HtmlWebpackPlugin({
+        template: "./index.html",
+        title: "Just Another Text Editor",
+      }),
       new InjectManifest({
-        srcSW: "./src-sw",
-        destSW: "src-sw.js",
+        swSrc: "./src-sw.js",
+        swDest: "src-sw.js",
       }),
       new WebpackPwaManifest({
         name: "Just Another Text Editor",
+        description: "A not-so-useful text editor for your text editing needs.",
         short_name: "JATE",
         background_color: "#225ca3",
+        theme_color: "#225ca3",
         icons: [
           {
-            src: path.resolve("src/images/logo.png"),
+            src: path.resolve("./src/images/logo.png"),
+            sizes: [48, 96, 128, 192, 256, 384, 512],
+            destination: path.join("assets", "icons"),
           },
         ],
         lang: "en",
-        // using default configs for crossorigin, fingerprints, inject,
-        // orientation, display, etc.
+        fingerprints: false,
+        inject: true,
+        start_url: "/",
+        publicPath: "/",
       }),
     ],
     module: {
       rules: [
         {
           test: /\.css$/,
-          use: ["css-loader", "style-loader"],
+          use: ["style-loader", "css-loader"],
         },
         {
           test: /\.(png|svg|jpg|jpeg|gif)$/i,
@@ -57,6 +63,10 @@ module.exports = () => {
             loader: "babel-loader",
             options: {
               presets: ["@babel/preset-env"],
+              plugins: [
+                "@babel/plugin-proposal-object-rest-spread",
+                "@babel/transform-runtime",
+              ],
             },
           },
         },
