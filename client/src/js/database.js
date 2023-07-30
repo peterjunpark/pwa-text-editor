@@ -12,7 +12,7 @@ const initdb = async () =>
     },
   });
 
-const jateStore = async (permission = "readwrite") => {
+const jateStore = async (permission = "readonly") => {
   const jateDb = await openDB("jate", 1);
   const tx = jateDb.transaction("jate", permission);
   const store = tx.objectStore("jate");
@@ -21,17 +21,15 @@ const jateStore = async (permission = "readwrite") => {
 
 // TODO: Add logic to a method that accepts some content and adds it to the database
 export const putDb = async (content) => {
-  const store = await jateStore();
-  const req = store.add({ text: content });
-  const res = await req;
+  const store = await jateStore("readwrite");
+  const res = await store.add({ text: content });
   return res;
 };
 
 // TODO: Add logic for a method that gets all the content from the database
-export const getDb = async () => async () => {
+export const getDb = async () => {
   const store = await jateStore("readonly");
-  const req = store.getAll();
-  const res = await req;
+  const res = await store.getAll();
   return res;
 };
 

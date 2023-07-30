@@ -1,6 +1,5 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const MiniCSSExtractPlugin = require("mini-css-extract-plugin");
 const WebpackPwaManifest = require("webpack-pwa-manifest");
 const { GenerateSW } = require("workbox-webpack-plugin");
 
@@ -23,40 +22,29 @@ module.exports = () => {
     },
     plugins: [
       new HtmlWebpackPlugin(),
-      new MiniCSSExtractPlugin(),
-      new GenerateSW({
-        exclude: [/\.(?:png|jpg|jpeg|svg)$/],
-        runtimeCaching: [
-          {
-            urlPattern: [/\.(?:png|jpg|jpeg|svg)$/],
-            handler: "CacheFirst",
-            options: {
-              cacheName: "images",
-            },
-            expiration: {
-              maxEntries: 2,
-            },
-          },
-        ],
+      new InjectManifest({
+        srcSW: "./src-sw",
+        destSW: "src-sw.js",
       }),
       new WebpackPwaManifest({
         name: "Just Another Text Editor",
         short_name: "JATE",
         background_color: "#225ca3",
-        orientation: "portrait",
-        display: "standalone",
         icons: [
           {
             src: path.resolve("src/images/logo.png"),
           },
         ],
+        lang: "en",
+        // using default configs for crossorigin, fingerprints, inject,
+        // orientation, display, etc.
       }),
     ],
     module: {
       rules: [
         {
-          test: /\.css$/i,
-          use: [MiniCSSExtractPlugin.loader, "css-loader"],
+          test: /\.css$/,
+          use: ["css-loader", "style-loader"],
         },
         {
           test: /\.(png|svg|jpg|jpeg|gif)$/i,
