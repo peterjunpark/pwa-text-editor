@@ -1,7 +1,7 @@
+const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCSSExtractPlugin = require("mini-css-extract-plugin");
 const WebpackPwaManifest = require("webpack-pwa-manifest");
-const path = require("path");
 const { GenerateSW } = require("workbox-webpack-plugin");
 
 // TODO: Add and configure workbox plugins for a service worker and manifest file.
@@ -36,6 +36,18 @@ module.exports = () => {
             expiration: {
               maxEntries: 2,
             },
+          },
+        ],
+      }),
+      new WebpackPwaManifest({
+        name: "Just Another Text Editor",
+        short_name: "JATE",
+        background_color: "#225ca3",
+        orientation: "portrait",
+        display: "standalone",
+        icons: [
+          {
+            src: path.resolve("src/images/logo.png"),
           },
         ],
       }),
